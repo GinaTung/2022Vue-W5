@@ -25,7 +25,7 @@ const app = createApp({
                 const {token ,expired} =res.data;
                 console.log(token,expired)
                 document.cookie =`hexToken=${token}; expires=${new Date(expired)};`;
-                window.location='https://ginatung.github.io/2022Vue-W4/week4';
+                window.location='https://ginatung.github.io/2022Vue-W5/week5';
             })
             // 登入帳號密碼輸入錯誤時，可以加入 alert 彈跳視窗來顯示登入失敗訊息。
             .catch((error)=>{
@@ -43,7 +43,7 @@ const app = createApp({
                 const {token ,expired} =res.data;
                 console.log(token,expired)
                 document.cookie =`hexToken=${token}; expires=${new Date(expired)};`;
-                window.location='https://ginatung.github.io/2022Vue-W4/week4';
+                window.location='https://ginatung.github.io/2022Vue-W5/week5';
                 if(res.data.message="登出成功"){
                     alert('登出成功');
                 }

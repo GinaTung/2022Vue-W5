@@ -10,6 +10,15 @@ body {
   justify-content: center;
 }
 
+.image{
+  height:900px;
+  background-image:url("../img/w5_img_bg.jpg");
+   
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
 .form-signin {
   width: 100%;
   max-width: 330px;
