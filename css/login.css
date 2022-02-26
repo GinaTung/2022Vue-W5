@@ -11,7 +11,7 @@ body {
 }
 
 .image{
-  height:900px;
+  /* height:900px; */
   background-image:url("../img/w5_img_bg.jpg");
    
   background-position: center;
