@@ -7,7 +7,17 @@ const api_path='yuling202202';
 const app = createApp({
     data(){
         return{
-            
+            cartData:{},
+            products:{},
+
+        }
+    },
+    methods:{
+        getProducts(){
+            axios.get(`${site}/api/${api_path}/admin/products/all`)
+            .then((res)=>{
+                console.log(res)
+            })
         }
     }
 });
