@@ -18,12 +18,34 @@ const app = createApp({
             .then((res)=>{
                 console.log(res)
                 this.products =res.data.getProducts;
+                console.log(res.data.products)
             })
         },
         mounted(){
             this.getProducts();
+        },
+        openProductModal(){
+
         }
     }
 });
+
+app.component('product-modal',{
+    template:'#userProductModal',
+    data(){
+        return{
+            modal:{}
+        }
+    },
+    methods:{
+        openModal(){
+            this.modal.show();
+        }
+    },
+    mounted(){
+        this.modal = new bootstrap.Modal(this.$refs.modal)
+          
+    }
+})
 
 app.mount('#app');
