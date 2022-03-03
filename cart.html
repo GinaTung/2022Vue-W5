@@ -41,11 +41,11 @@
                   {{ product.title }}
                 </td>
                 <td>
-                  <div class="h5">{{ product.price }} 元</div>
-                  <del class="h6">原價 {{ product_origin }} 元</del>
+                  <div class="h5" v-if=" product.price === product.origin_price">{{ product.price }} 元</div>
+                  <del class="h6">原價 {{ product.origin_price }} 元</del>
                   <div class="h5">現在只要 {{ product.price }} 元</div>
                 </td>
-                <td v-else>
+                <td >
                   <div class="btn-group btn-group-sm">
                     <button type="button" class="btn btn-outline-secondary">
                       <i class="fas fa-spinner fa-pulse"></i>
