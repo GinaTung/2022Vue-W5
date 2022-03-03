@@ -45,7 +45,7 @@
                   <del class="h6">原價 {{ product_origin }} 元</del>
                   <div class="h5">現在只要 {{ product.price }} 元</div>
                 </td>
-                <td>
+                <td v-else>
                   <div class="btn-group btn-group-sm">
                     <button type="button" class="btn btn-outline-secondary">
                       <i class="fas fa-spinner fa-pulse"></i>
