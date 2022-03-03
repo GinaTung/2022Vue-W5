@@ -14,10 +14,14 @@ const app = createApp({
     },
     methods:{
         getProducts(){
-            axios.get(`${site}/api/${api_path}/admin/products/all`)
+            axios.get(`${site}/api/${api_path}/products/all`)
             .then((res)=>{
                 console.log(res)
+                this.products =res.data.getProducts;
             })
+        },
+        mounted(){
+            this.getProducts();
         }
     }
 });
