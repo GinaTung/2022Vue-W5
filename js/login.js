@@ -25,7 +25,7 @@ const app = createApp({
                 const {token ,expired} =res.data;
                 console.log(token,expired)
                 document.cookie =`hexToken=${token}; expires=${new Date(expired)};`;
-                window.location='https://ginatung.github.io/2022Vue-W5/week5';
+                window.location='https://ginatung.github.io/2022Vue-W5/cart.html';
             })
             // 登入帳號密碼輸入錯誤時，可以加入 alert 彈跳視窗來顯示登入失敗訊息。
             .catch((error)=>{
