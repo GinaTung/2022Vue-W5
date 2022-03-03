@@ -8,7 +8,7 @@ const app = createApp({
     data(){
         return{
             cartData:{},
-            products:{},
+            products:[],
 
         }
     },
