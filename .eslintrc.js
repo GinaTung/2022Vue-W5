@@ -1,18 +1,12 @@
-export default {
+module.exports= {
   env: {
     browser: true,
     es2021: true
   },
-  _extends: [
+  extends: [
     'plugin:vue/essential',
     'standard'
   ],
-  get extends() {
-    return this._extends;
-  },
-  set extends(value) {
-    this._extends = value;
-  },
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module'

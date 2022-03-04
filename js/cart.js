@@ -9,7 +9,7 @@ const app = createApp({
         return{
             cartData:{},
             products:[],
-
+            productId:'',
         }
     },
     methods:{
@@ -17,32 +17,55 @@ const app = createApp({
             axios.get(`${site}/api/${api_path}/products/all`)
             .then((res)=>{
                 console.log(res)
-                this.products =res.data.getProducts;
-                console.log(res.data.products)
+                this.products =res.data.products;
             })
         },
-        mounted(){
-            this.getProducts();
+        openProductModal(id){
+            this.productId = id;
+            this.$refs.productModal.openModal();
         },
-        openProductModal(){
-
+        getCart(){
+            axios.get(`${site}/api/${api_path}/cart`)
+            .then((res)=>{
+                console.log(res)
+                // this.cart =res.data.product;
+            })
         }
+    },
+    mounted(){
+        this.getProducts();
+        this.getCart();
     }
 });
 
 app.component('product-modal',{
+    props:['id'],
     template:'#userProductModal',
     data(){
         return{
-            modal:{}
+            modal:{},
+            product:{}
+        }
+    },
+    watch:{
+        id(){
+            this.getProduct();
         }
     },
     methods:{
         openModal(){
             this.modal.show();
+        },
+        getProduct(){
+            axios.get(`${site}/api/${api_path}/product/${this.id}`)
+            .then((res)=>{
+                console.log(res)
+                this.product =res.data.product;
+            })
         }
     },
     mounted(){
+        //ref="modal"
         this.modal = new bootstrap.Modal(this.$refs.modal)
           
     }
