@@ -102,6 +102,7 @@ app.component('productModal',{
             axios[method](url ,{ data: this.tempProduct })
             .then((res)=>{
                 console.log(res)
+                console.dir(res)
                 //this.getProducts();沒有getPRoduct (外層方法)
                 this.$emit('get-product');
                 productModal.hide();
