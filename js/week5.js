@@ -59,12 +59,12 @@ const app = createApp({
                 this.isNew =true;
             }else if( status ==='edit'){
                 // 編輯的部分可以加上 imagesUrl this.tempProduct = { imagesUrl: [], ...product };
-                this.tempProduct ={imagesUrl: [],...product};
+                this.tempProduct ={imagesUrl: [],...JSON.parse(JSON.stringify(product))};
                 productModal.show();
                 this.isNew =false;
             }else if( status === 'delete'){
                 delProductModal.show();
-                this.tempProduct ={imagesUrl: [],...product};
+                this.tempProduct ={imagesUrl: [],...JSON.parse(JSON.stringify(product))};
             }
                 
            

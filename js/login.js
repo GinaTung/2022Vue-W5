@@ -36,7 +36,7 @@ const app = createApp({
             })
         },
         logout(){
-            const url =`${site}/logput`;
+            const url =`${site}/logout`;
             axios.post(url,this.user)
             .then((res) =>{
                 console.log(res)
