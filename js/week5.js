@@ -7,6 +7,7 @@ const api_path='yuling202202';
 let productModal ={};
 let delProductModal ={};
 
+
 const app = createApp({
     components:{
         pagination,
@@ -34,7 +35,7 @@ const app = createApp({
             })
 
         },
-        getProducts(page){
+        getProducts(page=1){
             const url =`${site}/api/${api_path}/admin/products?page=${page}`;
             axios.get(url)
             .then((res)=>{
@@ -56,6 +57,7 @@ const app = createApp({
                 productModal.show();
                 this.isNew =true;
             }else if( status ==='edit'){
+                // 編輯的部分可以加上 imagesUrl this.tempProduct = { imagesUrl: [], ...product };
                 this.tempProduct ={imagesUrl: [],...product};
                 productModal.show();
                 this.isNew =false;
@@ -67,17 +69,7 @@ const app = createApp({
            
         },
         
-        delProduct(){
-            let url =`${site}/api/${api_path}/admin/product/${this.tempProduct.id}`;
-
-            axios.delete(url)
-            .then((res)=>{
-                console.log(res)
-
-                this.getProducts();
-                delProductModal.hide();
-            });
-        }
+       
     },
     mounted(){
         this.checkLogin();
@@ -93,8 +85,9 @@ const app = createApp({
     }
 })
 
+//全域 新增
 app.component('productModal',{
-    props:['tempProduct'],
+    props:['tempProduct','isNew'],
     template:'#templateForProductModal',
     methods:{
         updateProduct(){
@@ -108,12 +101,44 @@ app.component('productModal',{
             axios[method](url ,{ data: this.tempProduct })
             .then((res)=>{
                 console.log(res)
-
+                //this.getProducts();沒有getPRoduct (外層方法)
                 this.$emit('get-product');
                 productModal.hide();
-            });
+                
+            })
+            // 補上 .catch 來回傳失敗的訊息
+            .catch(function (error) {
+                console.log(error);
+              });
+            
         },
     }
 })
 
+
+app.component('delProductModal',{
+    template: '#templateDelForProductModal',
+    props: ['item'],
+    methods:{
+        delProduct(){
+            let url =`${site}/api/${api_path}/admin/product/${this.item.id}`;
+
+            axios.delete(url)
+            .then((res)=>{
+                console.log(res)
+
+                //this.getProducts();
+                this.$emit('get-product');
+                delProductModal.hide();
+            });
+        },
+        openModal() {
+          delProductModal.show();
+        },
+        hideModal() {
+          delProductModal.hide();
+        },
+      },
+    
+})
 app.mount('#app');
