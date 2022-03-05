@@ -10,13 +10,14 @@ const app = createApp({
             cartData:{},
             products:[],
             productId:'',
+            isLoadingItem :''
         }
     },
     methods:{
         getProducts(){
             axios.get(`${site}/api/${api_path}/products/all`)
             .then((res)=>{
-                console.log(res)
+                //console.log(res)
                 this.products =res.data.products;
             })
         },
@@ -28,10 +29,47 @@ const app = createApp({
             axios.get(`${site}/api/${api_path}/cart`)
             .then((res)=>{
                 console.log(res)
-                this.cart =res.data.data;
+                this.cartData =res.data.data;
             })
-        }
+        },
+        addToCart(id , qty=1){//預設顯示數量
+            const data ={
+                product_id: id,
+                qty,
+            };
+            this.isLoadingItem =id;
+            axios.post(`${site}/api/${api_path}/cart`,{data})
+            .then((res)=>{
+                console.log(res)
+                this.getCart();
+                this.$refs.productModal.closeModal();
+                this.isLoadingItem='';
+            })   
+        },
+        removeCartItem(id){
+            this.isLoadingItem =id;
+            axios.delete(`${site}/api/${api_path}/cart/${id}`)
+            .then((res)=>{
+                console.log(res)
+                this.getCart();
+                this.isLoadingItem='';
+            }) 
+        },
+        updateCartItem(item){
+            const data ={
+                product_id: item.id,
+                qty: item.qty,
+            };
+            this.isLoadingItem =item.id;
+            axios.put(`${site}/api/${api_path}/cart/${item.id}`,{data})
+            .then((res)=>{
+                console.log(res)
+                this.getCart();
+                this.isLoadingItem='';
+            })   
+        },
     },
+    
     mounted(){
         this.getProducts();
         this.getCart();
@@ -44,7 +82,8 @@ app.component('product-modal',{
     data(){
         return{
             modal:{},
-            product:{}
+            product:{},
+            qty:1
         }
     },
     watch:{
@@ -56,12 +95,19 @@ app.component('product-modal',{
         openModal(){
             this.modal.show();
         },
+        closeModal(){
+            this.modal.hide();
+        },
         getProduct(){
             axios.get(`${site}/api/${api_path}/product/${this.id}`)
             .then((res)=>{
                 console.log(res)
                 this.product =res.data.product;
             })
+        },
+        addToCart(){
+            // console.log(this.qty)
+            this.$emit('add-cart',this.product.id, this.qty)
         }
     },
     mounted(){
