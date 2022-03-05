@@ -1,4 +1,5 @@
 import { createApp } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.esm-browser.min.js';
+import pagination from './pagination.js';
 
 //燈入及登入狀態、取得產品列表
 const site='https://vue3-course-api.hexschool.io/v2';
@@ -6,7 +7,11 @@ const api_path='yuling202202';
 let productModal ={};
 let delProductModal ={};
 
+
 const app = createApp({
+    components:{
+        pagination,
+    },
     data(){
         return{
             products:[],
@@ -14,6 +19,7 @@ const app = createApp({
                 imagesUrl:[],
             },
             isNew:false,
+            pagination:{},
         }
     },
     methods:{
@@ -29,15 +35,17 @@ const app = createApp({
             })
 
         },
-        getProducts(){
-            const url =`${site}/api/${api_path}/admin/products/all`;
+        getProducts(page=1){
+            const url =`${site}/api/${api_path}/admin/products?page=${page}`;
             axios.get(url)
             .then((res)=>{
                 this.products =res.data.products;
-               console.log(Object.values(this.products))//物件轉陣列
-                Object.values(this.products).forEach((item)=>{
-                    //console.log(item)
-                })
+                this.pagination =res.data.pagination;
+                console.log(res.data)
+            //    console.log(Object.values(this.products))//物件轉陣列
+            //     Object.values(this.products).forEach((item)=>{
+            //         //console.log(item)
+            //     })
             })
 
         },
@@ -50,43 +58,19 @@ const app = createApp({
                 productModal.show();
                 this.isNew =true;
             }else if( status ==='edit'){
-                this.tempProduct ={imagesUrl: [],...product};
+                // 編輯的部分可以加上 imagesUrl this.tempProduct = { imagesUrl: [], ...product };
+                this.tempProduct ={imagesUrl: [],...JSON.parse(JSON.stringify(product))};
                 productModal.show();
                 this.isNew =false;
             }else if( status === 'delete'){
                 delProductModal.show();
-                this.tempProduct ={imagesUrl: [],...product};
+                this.tempProduct ={imagesUrl: [],...JSON.parse(JSON.stringify(product))};
             }
                 
            
         },
-        updateProduct(){
-            let url =`${site}/api/${api_path}/admin/product`;
-            let method='post';
-
-            if(! this.isNew){
-                 url =`${site}/api/${api_path}/admin/product/${this.tempProduct.id}`;
-                 method='put';
-            }
-            axios[method](url ,{ data: this.tempProduct })
-            .then((res)=>{
-                console.log(res)
-
-                this.getProducts();
-                productModal.hide();
-            });
-        },
-        delProduct(){
-            let url =`${site}/api/${api_path}/admin/product/${this.tempProduct.id}`;
-
-            axios.delete(url)
-            .then((res)=>{
-                console.log(res)
-
-                this.getProducts();
-                delProductModal.hide();
-            });
-        }
+        
+       
     },
     mounted(){
         this.checkLogin();
@@ -100,5 +84,63 @@ const app = createApp({
         //       productModal.hide();
         //   },30000)
     }
+})
+
+//全域 新增
+app.component('productModal',{
+    props:['tempProduct'],
+    template:'#templateForProductModal',
+    methods:{
+        updateProduct(){
+            let url =`${site}/api/${api_path}/admin/product`;
+            let method='post';
+
+            if(! this.isNew){
+                 url =`${site}/api/${api_path}/admin/product/${this.tempProduct.id}`;
+                 method='put';
+            }
+            axios[method](url ,{ data: this.tempProduct })
+            .then((res)=>{
+                console.log(res)
+                console.dir(res)
+                //this.getProducts();沒有getPRoduct (外層方法)
+                this.$emit('get-product');
+                productModal.hide();
+                
+            })
+            // 補上 .catch 來回傳失敗的訊息
+            .catch(function (error) {
+                console.log(error);
+              });
+            
+        },
+    }
+})
+
+
+app.component('delProductModal',{
+    template: '#templateDelForProductModal',
+    props: ['item'],
+    methods:{
+        delProduct(){
+            let url =`${site}/api/${api_path}/admin/product/${this.item.id}`;
+
+            axios.delete(url)
+            .then((res)=>{
+                console.log(res)
+
+                //this.getProducts();
+                this.$emit('get-product');
+                delProductModal.hide();
+            });
+        },
+        openModal() {
+          delProductModal.show();
+        },
+        hideModal() {
+          delProductModal.hide();
+        },
+      },
+    
 })
 app.mount('#app');
