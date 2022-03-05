@@ -1,4 +1,5 @@
 import { createApp } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.esm-browser.min.js';
+import pagination from './pagination.js';
 
 //燈入及登入狀態、取得產品列表
 const site='https://vue3-course-api.hexschool.io/v2';
@@ -7,6 +8,9 @@ let productModal ={};
 let delProductModal ={};
 
 const app = createApp({
+    components:{
+        pagination,
+    },
     data(){
         return{
             products:[],
@@ -14,6 +18,7 @@ const app = createApp({
                 imagesUrl:[],
             },
             isNew:false,
+            pagination:{},
         }
     },
     methods:{
@@ -29,11 +34,12 @@ const app = createApp({
             })
 
         },
-        getProducts(){
-            const url =`${site}/api/${api_path}/admin/products`;
+        getProducts(page){
+            const url =`${site}/api/${api_path}/admin/products?page=${page}`;
             axios.get(url)
             .then((res)=>{
                 this.products =res.data.products;
+                this.pagination =res.data.pagination;
             //    console.log(Object.values(this.products))//物件轉陣列
             //     Object.values(this.products).forEach((item)=>{
             //         //console.log(item)
@@ -60,22 +66,7 @@ const app = createApp({
                 
            
         },
-        updateProduct(){
-            let url =`${site}/api/${api_path}/admin/product`;
-            let method='post';
-
-            if(! this.isNew){
-                 url =`${site}/api/${api_path}/admin/product/${this.tempProduct.id}`;
-                 method='put';
-            }
-            axios[method](url ,{ data: this.tempProduct })
-            .then((res)=>{
-                console.log(res)
-
-                this.getProducts();
-                productModal.hide();
-            });
-        },
+        
         delProduct(){
             let url =`${site}/api/${api_path}/admin/product/${this.tempProduct.id}`;
 
@@ -101,4 +92,28 @@ const app = createApp({
         //   },30000)
     }
 })
+
+app.component('productModal',{
+    props:['tempProduct'],
+    template:'#templateForProductModal',
+    methods:{
+        updateProduct(){
+            let url =`${site}/api/${api_path}/admin/product`;
+            let method='post';
+
+            if(! this.isNew){
+                 url =`${site}/api/${api_path}/admin/product/${this.tempProduct.id}`;
+                 method='put';
+            }
+            axios[method](url ,{ data: this.tempProduct })
+            .then((res)=>{
+                console.log(res)
+
+                this.$emit('get-product');
+                productModal.hide();
+            });
+        },
+    }
+})
+
 app.mount('#app');

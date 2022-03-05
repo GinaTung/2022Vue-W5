@@ -13,7 +13,7 @@ export default {
        @click="$emit('get-product',page)">{{ page }}</a>
        </li>
     
-      <li class="page-item" :class="{disabled: !pages.has_pre}">
+      <li class="page-item" :class="{disabled: !pages.has_next}">
         <a class="page-link" href="#" aria-label="Next">
           <span aria-hidden="true">&raquo;</span>
         </a>
