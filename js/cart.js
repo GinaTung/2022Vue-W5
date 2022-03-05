@@ -28,7 +28,7 @@ const app = createApp({
             axios.get(`${site}/api/${api_path}/cart`)
             .then((res)=>{
                 console.log(res)
-                // this.cart =res.data.product;
+                this.cart =res.data.data;
             })
         }
     },
