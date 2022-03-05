@@ -32,6 +32,7 @@ const app = createApp({
                 console.log(error.data)
                 if(error.data.message="登入失敗"){
                     alert('請填寫正確的帳號及密碼');
+                    window.location='https://ginatung.github.io/2022Vue-W5/week5';
                 }
             })
         },
