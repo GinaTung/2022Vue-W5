@@ -1,17 +1,52 @@
 import { createApp } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.esm-browser.min.js';
 
+const { defineRule, Form, Field, ErrorMessage, configure } = VeeValidate;
+const { required, email, min, max } = VeeValidateRules;
+const { localize, loadLocaleFromURL } = VeeValidateI18n;
+
+defineRule('required', required);
+defineRule('email', email);
+defineRule('min', min);
+defineRule('max', max);
+
+// 載入多國語系
+loadLocaleFromURL('https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/zh_TW.json');
+
+// 設定
+configure({
+  generateMessage: localize('zh_TW'),
+  //validateOnInput: true, // 此項為true時，輸入文字就會立即進行驗證
+});
+
 //燈入及登入狀態、取得產品列表
 const site='https://vue3-course-api.hexschool.io/v2';
 const api_path='yuling202202';
 
-const app = createApp({
+
+const app = Vue.createApp({
     data(){
         return{
             cartData:{},
             products:[],
             productId:'',
-            isLoadingItem :''
+            isLoadingItem :'',
+            form: {
+                user: {
+                  name: '',
+                  email: '',
+                  tel: '',
+                  address: '',
+                },
+                message: '',
+            },
+            cart: {},
+            
         }
+    },
+    components: {
+        VForm: Form,
+        VField: Field,
+        ErrorMessage: ErrorMessage,
     },
     methods:{
         getProducts(){
@@ -19,18 +54,31 @@ const app = createApp({
             .then((res)=>{
                 //console.log(res)
                 this.products =res.data.products;
-            })
+            }).catch((err) => {
+                alert(err.data.message);
+              });
         },
         openProductModal(id){
             this.productId = id;
             this.$refs.productModal.openModal();
         },
+        deleteAllCarts() {
+            axios.delete(`${site}/api/${api_path}/carts`)
+            .then((res) => {
+              alert(res.data.message);
+              this.getCart();
+            }).catch((err) => {
+              alert(err.data.message);
+            });
+          },
         getCart(){
             axios.get(`${site}/api/${api_path}/cart`)
             .then((res)=>{
                 console.log(res)
                 this.cartData =res.data.data;
-            })
+            }).catch((err) => {
+                alert(err.data.message);
+              });
         },
         addToCart(id , qty=1){//預設顯示數量
             const data ={
@@ -44,7 +92,9 @@ const app = createApp({
                 this.getCart();
                 this.$refs.productModal.closeModal();
                 this.isLoadingItem='';
-            })   
+            }).catch((err) => {
+                alert(err.data.message);
+              });   
         },
         removeCartItem(id){
             this.isLoadingItem =id;
@@ -53,7 +103,9 @@ const app = createApp({
                 console.log(res)
                 this.getCart();
                 this.isLoadingItem='';
-            }) 
+            }).catch((err) => {
+                alert(err.data.message);
+              }); 
         },
         updateCartItem(item){
             const data ={
@@ -66,8 +118,35 @@ const app = createApp({
                 console.log(res)
                 this.getCart();
                 this.isLoadingItem='';
-            })   
+            }).catch((err) => {
+                alert(err.data.message);
+              });   
         },
+        createOrder() {
+            const order = this.form;
+            axios.post(`${site}/api/${api_path}/order`, { data: order })
+            .then((res) => {
+              alert(res.data.message);
+              this.$refs.form.resetForm();
+              this.getCart();
+              console.log(res)
+            }).catch((err) => {
+              alert(err.data.message);
+            });
+          },
+        //   productCoupon(){
+        //     axios.post(`${site}/api/${api_path}/coupon`)
+        //     .then((res) => {
+        //         if(cartData.total>2000){
+                    
+        //             alert(res.data.message);
+        //             console.log(res)
+        //         }
+                
+        //       }).catch((err) => {
+        //         alert(err.data.message);
+        //       });
+        //   }
     },
     
     mounted(){
@@ -75,6 +154,10 @@ const app = createApp({
         this.getCart();
     }
 });
+
+// app.component('VForm', VeeValidate.Form);
+// app.component('VField', VeeValidate.Field);
+// app.component('ErrorMessage', VeeValidate.ErrorMessage);
 
 app.component('product-modal',{
     props:['id'],
@@ -103,11 +186,16 @@ app.component('product-modal',{
             .then((res)=>{
                 console.log(res)
                 this.product =res.data.product;
-            })
+            }).catch((err) => {
+                alert(err.data.message);
+              });
         },
         addToCart(){
             // console.log(this.qty)
             this.$emit('add-cart',this.product.id, this.qty)
+        },
+        submit(){
+            alert("訂單建立成功~");
         }
     },
     mounted(){
